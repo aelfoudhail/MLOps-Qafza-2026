@@ -1,0 +1,19 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# logs
+logs/*.log*
+
+# model artifacts, versioned with DVC instead of git
+artifacts/*
+!artifacts/.gitkeep
+models/*
+
+# macOS
+.DS_Store
