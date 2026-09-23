@@ -11,8 +11,9 @@ __pycache__/
 logs/*.log*
 
 # model artifacts, versioned with DVC instead of git
-artifacts/*
-!artifacts/.gitkeep
+artifacts/*.pkl
+artifacts/*.parquet
+artifacts/feature_list.txt
 models/*
 
 # macOS
