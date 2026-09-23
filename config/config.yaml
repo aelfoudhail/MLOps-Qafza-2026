@@ -1,0 +1,65 @@
+# Central configuration for the late-delivery inference service.
+# Nothing in src/ or app/ should hardcode a path, a table name, or a
+# threshold, it all comes from here (or from environment variables for
+# anything secret, see .env).
+
+database:
+  host: "${DB_HOST}"
+  port: "${DB_PORT}"
+  name: "${DB_NAME}"
+  user: "${DB_USER}"
+  password: "${DB_PASSWORD}"
+
+artifacts:
+  dir: "artifacts"
+  model_file: "model.pkl"
+  preprocessor_file: "preprocessor.pkl"
+  threshold_file: "decision_threshold.pkl"
+  top_states_file: "top_states.pkl"
+  top_seller_states_file: "top_seller_states.pkl"
+  feature_list_file: "feature_list.txt"
+  logreg_scaler_file: "logreg_scaler.pkl"
+
+model:
+  name: "late_delivery_classifier"
+  version: "0.1.0"
+
+features:
+  numeric_features:
+    - "num_items"
+    - "num_distinct_products"
+    - "num_distinct_sellers"
+    - "total_price"
+    - "total_freight_value"
+    - "avg_item_price"
+    - "num_payments"
+    - "total_payment_value"
+    - "max_installments"
+    - "estimated_delivery_days"
+    - "purchase_month"
+    - "purchase_weekday"
+    - "high_risk_month"
+    - "avg_distance_km"
+    - "total_product_weight_g"
+    - "avg_product_weight_g"
+    - "avg_product_length_cm"
+    - "avg_product_height_cm"
+    - "avg_product_width_cm"
+  categorical_features:
+    - "customer_state_grouped"
+    - "main_seller_state_grouped"
+    - "main_payment_type"
+  high_risk_months: [11, 2, 3]
+  rare_category_label: "other"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  title: "Late Delivery Prediction API"
+
+logging:
+  level: "INFO"
+  dir: "logs"
+  file: "app.log"
+  max_bytes: 5000000
+  backup_count: 3

@@ -1,0 +1,48 @@
+"""
+Glues feature engineering and the predictor together, one function in, one
+object out.
+"""
+
+import logging
+import time
+
+from src.config import load_config
+from src.features.engineer import build_features
+from src.models.predictor import get_predictor
+from src.validation.schemas import OrderRequest, PredictionResponse
+
+logger = logging.getLogger(__name__)
+
+
+class PredictionPipelineError(Exception):
+    """Raised for problems with a single request. Caught by the API layer,
+    returned as a clean error, never crashes the service."""
+
+
+def predict(order: OrderRequest) -> PredictionResponse:
+    start = time.perf_counter()
+    features_config = load_config()["features"]
+
+    try:
+        raw = order.model_dump()
+        features_df = build_features(
+            raw_order=raw,
+            top_states=get_predictor().top_states,
+            top_seller_states=get_predictor().top_seller_states,
+            high_risk_months=features_config["high_risk_months"],
+        )
+        result = get_predictor().predict_one(features_df)
+
+    except Exception as exc:
+        logger.error("prediction failed for order_id=%s: %s", order.order_id, exc, exc_info=True)
+        raise PredictionPipelineError(str(exc)) from exc
+
+    latency_ms = (time.perf_counter() - start) * 1000
+    logger.info(
+        "prediction served | order_id=%s | is_late=%s | probability=%.4f | model=%s v%s | latency_ms=%.1f",
+        order.order_id, result["is_late"], result["probability"],
+        result["model_name"], result["model_version"], latency_ms,
+    )
+
+    return PredictionResponse(order_id=order.order_id, **result)
+
