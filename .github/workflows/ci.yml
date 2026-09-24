@@ -36,5 +36,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create placeholder artifacts for build verification
+        run: |
+          mkdir -p artifacts mlruns
+          touch artifacts/preprocessor.pkl artifacts/decision_threshold.pkl
+          touch artifacts/top_states.pkl artifacts/top_seller_states.pkl
+          touch artifacts/feature_list.txt
+          touch mlflow.db
+
       - name: Build Docker image
         run: docker build -t delivery-prediction-api .
