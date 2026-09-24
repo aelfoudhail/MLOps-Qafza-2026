@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from src.config import load_config
 from src.logging_config import setup_logging
 from src.models.predictor import ArtifactLoadError, get_predictor
+from src.monitoring.metrics import record_request, snapshot
 from src.pipeline import PredictionPipelineError, predict
 from src.validation.schemas import (
     BatchPredictionRequest,
@@ -33,6 +34,7 @@ async def log_requests(request: Request, call_next):
     start = time.perf_counter()
     response = await call_next(request)
     latency_ms = (time.perf_counter() - start) * 1000
+    record_request(response.status_code, latency_ms)
     logger.info(
         "request | method=%s | path=%s | status=%s | latency_ms=%.1f",
         request.method,
@@ -103,3 +105,8 @@ def predict_batch(batch: BatchPredictionRequest):
     if _startup_error is not None:
         raise HTTPException(status_code=503, detail="model not loaded: " + _startup_error)
     return BatchPredictionResponse(predictions=[predict(order) for order in batch.orders])
+
+
+@app.get("/metrics", tags=["ops"])
+def metrics():
+    return snapshot()

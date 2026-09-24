@@ -68,3 +68,7 @@ mlflow:
   db_file: "mlflow.db"
   model_name: "late_delivery_classifier"
   model_alias: "champion"
+
+monitoring:
+  baseline_late_rate: 0.066
+  drift_threshold_points: 0.05
