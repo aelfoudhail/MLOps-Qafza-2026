@@ -63,3 +63,8 @@ logging:
   file: "app.log"
   max_bytes: 5000000
   backup_count: 3
+
+mlflow:
+  db_file: "mlflow.db"
+  model_name: "late_delivery_classifier"
+  model_alias: "champion"

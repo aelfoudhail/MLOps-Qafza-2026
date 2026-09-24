@@ -18,3 +18,5 @@ models/*
 
 # macOS
 .DS_Store
+mlruns/
+mlflow.db

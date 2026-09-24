@@ -5,3 +5,4 @@ black==26.5.1
 ruff==0.16.8
 dvc==3.67.1
 great_expectations==1.23.1
+httpx2==2.13.1

@@ -10,6 +10,33 @@ class OrderRequest(BaseModel):
     high_risk_month, customer_state_grouped, etc.) are NOT requested here,
     they get computed by src/features/engineer.py from these raw values.
     """
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "order_id": "example-order-1",
+                "order_purchase_timestamp": "2018-02-10T14:30:00",
+                "order_estimated_delivery_date": "2018-02-25T00:00:00",
+                "num_items": 2,
+                "num_distinct_products": 2,
+                "num_distinct_sellers": 1,
+                "total_price": 150.0,
+                "total_freight_value": 20.0,
+                "avg_item_price": 75.0,
+                "num_payments": 1,
+                "total_payment_value": 170.0,
+                "max_installments": 3,
+                "main_payment_type": "credit_card",
+                "avg_distance_km": 500.0,
+                "total_product_weight_g": 1200.0,
+                "avg_product_weight_g": 600.0,
+                "avg_product_length_cm": 20.0,
+                "avg_product_height_cm": 10.0,
+                "avg_product_width_cm": 15.0,
+                "customer_state": "SP",
+                "main_seller_state": "RJ",
+            }
+        }
+    )
 
     order_id: Optional[str] = None
 
