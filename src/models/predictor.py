@@ -3,15 +3,15 @@ Loads the fitted artifacts notebooks 5/6 produced. Fails loudly at startup
 if anything's missing, rather than serving predictions from a half-loaded
 model.
 """
-import mlflow
-import mlflow.sklearn
-from mlflow.exceptions import MlflowException
-from mlflow.tracking import MlflowClient
 
 import logging
 
 import joblib
+import mlflow
+import mlflow.sklearn
 import pandas as pd
+from mlflow.exceptions import MlflowException
+from mlflow.tracking import MlflowClient
 
 from src.config import PROJECT_ROOT, get_artifact_path, load_config
 
@@ -61,19 +61,25 @@ class Predictor:
         if self.model_name == "LogisticRegression":
             scaler_path = get_artifact_path("logreg_scaler_file")
             if not scaler_path.exists():
-                raise ArtifactLoadError("Model is LogisticRegression but logreg_scaler.pkl is missing")
+                raise ArtifactLoadError(
+                    "Model is LogisticRegression but logreg_scaler.pkl is missing"
+                )
             self.scaler = joblib.load(scaler_path)
 
         logger.info(
             "Loaded model=%s (registry version %s) threshold=%.3f",
-            self.model_name, self.model_version, self.threshold,
+            self.model_name,
+            self.model_version,
+            self.threshold,
         )
 
     def predict_one(self, features_df: pd.DataFrame) -> dict:
         numeric_features = self.config["features"]["numeric_features"]
         categorical_features = self.config["features"]["categorical_features"]
 
-        missing_cols = [c for c in numeric_features + categorical_features if c not in features_df.columns]
+        missing_cols = [
+            c for c in numeric_features + categorical_features if c not in features_df.columns
+        ]
         if missing_cols:
             raise ValueError(f"features_df is missing expected columns: {missing_cols}")
 

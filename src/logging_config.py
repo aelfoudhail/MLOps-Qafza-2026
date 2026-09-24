@@ -6,7 +6,6 @@ logging.getLogger(__name__) and uses it, no print() anywhere in src/ or app/.
 
 import logging
 import logging.handlers
-from pathlib import Path
 
 from src.config import PROJECT_ROOT, load_config
 

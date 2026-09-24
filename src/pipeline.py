@@ -34,15 +34,18 @@ def predict(order: OrderRequest) -> PredictionResponse:
         result = get_predictor().predict_one(features_df)
 
     except Exception as exc:
-        logger.error("prediction failed for order_id=%s: %s", order.order_id, exc, exc_info=True)
+        logger.exception("prediction failed for order_id=%s: %s", order.order_id, exc)
         raise PredictionPipelineError(str(exc)) from exc
 
     latency_ms = (time.perf_counter() - start) * 1000
     logger.info(
-        "prediction served | order_id=%s | is_late=%s | probability=%.4f | model=%s v%s | latency_ms=%.1f",
-        order.order_id, result["is_late"], result["probability"],
-        result["model_name"], result["model_version"], latency_ms,
+        "prediction served | order_id=%s | is_late=%s | probability=%.4f | "
+        "model=%s v%s | latency_ms=%.1f",
+        order.order_id,
+        result["is_late"],
+        result["probability"],
+        result["model_name"],
+        result["model_version"],
+        latency_ms,
     )
-
     return PredictionResponse(order_id=order.order_id, **result)
-

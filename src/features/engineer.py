@@ -51,5 +51,7 @@ def build_features(
     df = engineer_dates(df)
     df = add_high_risk_month_flag(df, high_risk_months)
     df = bucket_rare_categories(df, "customer_state", top_states, "customer_state_grouped")
-    df = bucket_rare_categories(df, "main_seller_state", top_seller_states, "main_seller_state_grouped")
+    df = bucket_rare_categories(
+        df, "main_seller_state", top_seller_states, "main_seller_state_grouped"
+    )
     return df

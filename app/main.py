@@ -13,8 +13,11 @@ from src.logging_config import setup_logging
 from src.models.predictor import ArtifactLoadError, get_predictor
 from src.pipeline import PredictionPipelineError, predict
 from src.validation.schemas import (
-    BatchPredictionRequest, BatchPredictionResponse,
-    HealthResponse, OrderRequest, PredictionResponse,
+    BatchPredictionRequest,
+    BatchPredictionResponse,
+    HealthResponse,
+    OrderRequest,
+    PredictionResponse,
 )
 
 setup_logging()
@@ -25,7 +28,6 @@ api_config = load_config()["api"]
 app = FastAPI(title=api_config["title"], version="0.1.0")
 
 
-
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     start = time.perf_counter()
@@ -33,9 +35,13 @@ async def log_requests(request: Request, call_next):
     latency_ms = (time.perf_counter() - start) * 1000
     logger.info(
         "request | method=%s | path=%s | status=%s | latency_ms=%.1f",
-        request.method, request.url.path, response.status_code, latency_ms,
+        request.method,
+        request.url.path,
+        response.status_code,
+        latency_ms,
     )
     return response
+
 
 _startup_error = None
 
@@ -53,15 +59,24 @@ def load_model_on_startup():
 
 @app.exception_handler(PredictionPipelineError)
 def handle_pipeline_error(request: Request, exc: PredictionPipelineError):
-    return JSONResponse(status_code=422, content={"detail": f"could not generate a prediction: {exc}"})
+    return JSONResponse(
+        status_code=422, content={"detail": f"could not generate a prediction: {exc}"}
+    )
 
 
 @app.get("/health", response_model=HealthResponse, tags=["ops"])
 def health():
     if _startup_error is not None:
-        return HealthResponse(status="unhealthy", model_loaded=False, model_name="unknown", model_version="unknown")
+        return HealthResponse(
+            status="unhealthy", model_loaded=False, model_name="unknown", model_version="unknown"
+        )
     predictor = get_predictor()
-    return HealthResponse(status="ok", model_loaded=True, model_name=predictor.model_name, model_version=predictor.model_version)
+    return HealthResponse(
+        status="ok",
+        model_loaded=True,
+        model_name=predictor.model_name,
+        model_version=predictor.model_version,
+    )
 
 
 @app.get("/model/info", tags=["ops"])

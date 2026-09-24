@@ -10,6 +10,7 @@ class OrderRequest(BaseModel):
     high_risk_month, customer_state_grouped, etc.) are NOT requested here,
     they get computed by src/features/engineer.py from these raw values.
     """
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {

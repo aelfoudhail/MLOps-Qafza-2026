@@ -34,6 +34,7 @@ def load_config() -> dict:
 
     return _substitute_env_vars(raw)
 
+
 def get_artifact_path(filename_key: str) -> Path:
     """Resolve one of the artifact filenames in config to a full path.
     e.g. get_artifact_path("model_file") -> PROJECT_ROOT/artifacts/model.pkl

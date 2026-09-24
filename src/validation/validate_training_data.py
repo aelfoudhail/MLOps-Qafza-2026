@@ -33,7 +33,9 @@ def validate_ml_table(path=None) -> bool:
         gx.expectations.ExpectColumnValuesToMatchRegex(column="customer_state", regex=r"^[A-Z]{2}$")
     )
     suite.add_expectation(
-        gx.expectations.ExpectColumnValuesToBeBetween(column="total_price", min_value=0, strict_min=True)
+        gx.expectations.ExpectColumnValuesToBeBetween(
+            column="total_price", min_value=0, strict_min=True
+        )
     )
     suite.add_expectation(
         gx.expectations.ExpectColumnValuesToBeBetween(column="total_freight_value", min_value=0)

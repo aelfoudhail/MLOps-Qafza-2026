@@ -32,14 +32,18 @@ def register_current_model():
         mlflow.log_metric("decision_threshold", threshold)
 
         model_info = mlflow.sklearn.log_model(
-                    sk_model=model,
-                    name="model",
-                    registered_model_name=MODEL_NAME,
-                    skops_trusted_types=["sklearn.tree._tree.Tree"],
-                )
+            sk_model=model,
+            name="model",
+            registered_model_name=MODEL_NAME,
+            skops_trusted_types=["sklearn.tree._tree.Tree"],
+        )
 
-        logger.info("logged run %s, registered as %s v%s",
-                    run.info.run_id, MODEL_NAME, model_info.registered_model_version)
+        logger.info(
+            "logged run %s, registered as %s v%s",
+            run.info.run_id,
+            MODEL_NAME,
+            model_info.registered_model_version,
+        )
 
     client = MlflowClient()
     client.set_registered_model_alias(
@@ -48,7 +52,6 @@ def register_current_model():
         version=model_info.registered_model_version,
     )
     logger.info("set alias 'champion' -> version %s", model_info.registered_model_version)
-
 
 
 if __name__ == "__main__":
