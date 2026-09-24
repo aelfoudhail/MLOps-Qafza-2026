@@ -6,3 +6,4 @@ ruff==0.16.8
 dvc==3.67.1
 great_expectations==1.23.1
 httpx2==2.13.1
+pre_commit==4.6.2
