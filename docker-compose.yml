@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16
+    container_name: delivery-prediction-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  api:
+    build: .
+    container_name: delivery-prediction-api
+    ports:
+      - "8000:8000"
+    environment:
+      # inside the Docker network, services reach each other by name, not
+      # "localhost" — this overrides whatever .env says locally
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # persists artifacts/model registry data beyond the container's own
+      # lifecycle, so removing/recreating the container doesn't lose it,
+      # "not just on your laptop" in the sense that it survives container
+      # teardown rather than living only inside one ephemeral container
+      - artifacts_data:/Users/elfoudhailahmed/Documents/MLOps-Qafza-2026/artifacts
+
+volumes:
+  db_data:
+  artifacts_data:
